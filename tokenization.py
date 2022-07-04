@@ -165,19 +165,23 @@ class BasicTokenizer(object):
         token = self._run_strip_accents(token)
       split_tokens.extend(self._run_split_on_punc(token))
     # tuza 特殊处理分出[seq]
-    if 'seq' in split_tokens:
-      try:
-        for idx, item in enumerate(split_tokens):
-          if item == 'seq':
-            if split_tokens[idx-1]+split_tokens[idx]+split_tokens[idx+1] == '[seq]':
-              split_tokens.pop(idx+1)
-              split_tokens.pop(idx)
-              split_tokens.pop(idx-1)
-              split_tokens.insert(idx-1, '[seq]')
-              break
-      except:
-        pass
-
+    idx, new_tokens = 0, []
+    if 'seq' in split_tokens or '※' in split_tokens:
+      while idx < len(split_tokens):
+        item = split_tokens[idx]
+        if item == '[' and idx + 2 <= len(split_tokens) - 1:
+          if split_tokens[idx]+split_tokens[idx+1]+split_tokens[idx+2] == '[seq]':
+            new_tokens.append('[seq]')
+            idx += 3
+            continue
+        elif item == '(' and idx + 2 <= len(split_tokens) - 1:
+          if split_tokens[idx]+split_tokens[idx+1]+split_tokens[idx+2] == '(※)':
+            new_tokens.append('(※)')
+            idx += 3
+            continue
+        new_tokens.append(item)
+        idx += 1
+    split_tokens = new_tokens if new_tokens else split_tokens
     output_tokens = whitespace_tokenize(" ".join(split_tokens))
     return output_tokens
 
@@ -367,7 +371,7 @@ if __name__ == "__main__":
   b = BasicTokenizer()
   token = b.tokenize
 
-  s = "[seq]今天你吃饭了吗seq]哈哈[[seq"
+  s = "[seq]今天你吃饭(※了吗seq]哈哈[[seq(※["
   print(s)
   print(token(s))
 
