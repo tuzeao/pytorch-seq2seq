@@ -164,6 +164,19 @@ class BasicTokenizer(object):
         token = token.lower()
         token = self._run_strip_accents(token)
       split_tokens.extend(self._run_split_on_punc(token))
+    # tuza 特殊处理分出[seq]
+    if 'seq' in split_tokens:
+      try:
+        for idx, item in enumerate(split_tokens):
+          if item == 'seq':
+            if split_tokens[idx-1]+split_tokens[idx]+split_tokens[idx+1] == '[seq]':
+              split_tokens.pop(idx+1)
+              split_tokens.pop(idx)
+              split_tokens.pop(idx-1)
+              split_tokens.insert(idx-1, '[seq]')
+              break
+      except:
+        pass
 
     output_tokens = whitespace_tokenize(" ".join(split_tokens))
     return output_tokens
@@ -348,3 +361,17 @@ def _is_punctuation(char):
   if cat.startswith("P"):
     return True
   return False
+
+
+if __name__ == "__main__":
+  b = BasicTokenizer()
+  token = b.tokenize
+
+  s = "[seq]今天你吃饭了吗seq]哈哈[[seq"
+  print(s)
+  print(token(s))
+
+
+
+
+
