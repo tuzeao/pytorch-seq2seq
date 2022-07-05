@@ -165,6 +165,12 @@ def is_time(text):
         return True
     return False
 
+def search_sep(quest):
+    sep_pt = re.compile(r'\[seq\]')
+    m = sep_pt.search(quest)
+    if m:
+        return m.group(), m.start(), m.end(), MathTag.OTHER
+    return None, None, None, None
 
 def search_exp(question):
     """匹配题目中的算式"""
@@ -299,7 +305,7 @@ def get_re(question):
     """获取所有根据正则表达式得到的词性标注结果"""
     question, records = normalization(question)  # 文本归一化，方便正则匹配
     funcs = [search_exp, search_sup, search_zh_percent, search_time, search_frac, search_zh_frac, search_zh_num,
-             search_text_power, search_text, search_degree]
+             search_text_power, search_text, search_degree, search_sep]
     outs = []
     for func in funcs:
         prefix = 0
@@ -800,6 +806,6 @@ def jieba_tokenize(text):
 
 
 if __name__ == '__main__':
-    text = "小船的船桨长1.3※米，伸入水中的部分长0.2米，露出水面的部分长(※，)米。"
+    text = "小船的船桨长1.3※米，伸入水中的部分长0.2米，露出水面的部分长(※，)米。[seq]哈哈哈哈哈"
     pos = math_pos_seg(text)
     print(pos)
