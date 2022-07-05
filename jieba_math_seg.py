@@ -169,7 +169,7 @@ def search_sep(quest):
     sep_pt = re.compile(r'\[seq\]')
     m = sep_pt.search(quest)
     if m:
-        return m.group(), m.start(), m.end(), MathTag.OTHER
+        return m.group(), m.start(), m.end(), MathTag.SYMBOL
     return None, None, None, None
 
 def search_exp(question):
@@ -806,6 +806,6 @@ def jieba_tokenize(text):
 
 
 if __name__ == '__main__':
-    text = "小船的船桨长1.3※米，伸入水中的部分长0.2米，露出水面的部分长(※，)米。[seq]哈哈哈哈哈"
+    text = "米。[seq]哈哈哈哈哈"
     pos = math_pos_seg(text)
     print(pos)
