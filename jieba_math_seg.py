@@ -794,6 +794,11 @@ def math_pos_seg(question):
     return outs
 
 
+def jieba_tokenize(text):
+    res = math_pos_seg(text)
+    return [i[0] for i in res]
+
+
 if __name__ == '__main__':
     text = "小船的船桨长1.3※米，伸入水中的部分长0.2米，露出水面的部分长(※，)米。"
     pos = math_pos_seg(text)
